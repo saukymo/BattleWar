@@ -1,6 +1,5 @@
 import pygame, sys
 from pygame.locals import *
-
 from gameconst import *
 
 class Point:
@@ -13,8 +12,8 @@ class TileBase:
         self.surface = surface
         self.row = row
         self.col = col
-        self.width = MAP_WIDTH / COLS
-        self.height = MAP_HEIGHT / ROWS
+        self.width = CELL_SIZE
+        self.height = CELL_SIZE
 
     def draw(self, focus):
         # real_x = offset_x  - focus.x + self.x
@@ -22,7 +21,7 @@ class TileBase:
         y =- focus.y + self.row * self.height
 
         pygame.draw.rect(self.surface, WHITE, (x, y, self.width, self.height), 0)
-        pygame.draw.rect(self.surface, (150, 150, 150), (x, y, self.width, self.height), 1)
+        pygame.draw.rect(self.surface, GREY, (x, y, self.width, self.height), 1)
 
         # print x, y
 
@@ -53,4 +52,16 @@ class TileMap:
         if mouse_pos.y >= GAME_WINDOW_HEIGHT - SIGHT_MOVE_PADDING and self.focus.y <= MAP_HEIGHT - WINDOW_HEIGHT:
             self.focus.y += self.delta
 
+    def draw_soldier(self, soldier):
+        row, col = soldier.row, soldier.col
+        x = int(CELL_SIZE * (col + 0.5) - self.focus.x)
+        y = int(CELL_SIZE * (row + 0.5) - self.focus.y)
+        pygame.draw.circle(self.surface, BLUE, (x, y), int(CELL_SIZE * 0.4), 1)
+
+    def handler_click(self, mouse_pos):
+        if (0 <= mouse_pos.x - OFFSET_X <= WINDOW_WIDTH) and (0 <= mouse_pos.y - OFFSET_Y <= WINDOW_HEIGHT):  
+            x = (mouse_pos.x - OFFSET_X + self.focus.x) / CELL_SIZE
+            y = (mouse_pos.y - OFFSET_Y + self.focus.y) / CELL_SIZE
+            return x, y
+        return None, None
 
